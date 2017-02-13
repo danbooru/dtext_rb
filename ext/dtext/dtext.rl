@@ -262,12 +262,23 @@ inline := |*
       lowercase_segment = g_string_new(g_ascii_strdown(segment->str, -1));
     }
 
+    if (sm->each_node) {
+      const char* args[] = { "basic_wiki_link", segment->str, NULL };
+      const char* replacement = sm->each_node(sm, 2, args);
+
+      if (replacement) {
+        append_segment(sm, true, replacement, replacement + strlen(replacement) - 1);
+        goto basic_wiki_link_exit;
+      }
+    }
+
     append(sm, true, "<a class=\"dtext-link dtext-wiki-link\" href=\"/wiki_pages/show_or_new?title=");
     append_segment_uri_escaped(sm, lowercase_segment->str, lowercase_segment->str + lowercase_segment->len - 1);
     append(sm, true, "\">");
     append_segment_html_escaped(sm, sm->a1, sm->a2 - 1);
     append(sm, true, "</a>");
 
+basic_wiki_link_exit:
     g_string_free(lowercase_segment, TRUE);
     g_string_free(segment, TRUE);
   };
@@ -1347,6 +1358,7 @@ StateMachine* init_machine(const char * src, size_t len, bool f_strip, bool f_in
   sm->d = 0;
   sm->b = 0;
   sm->quote = 0;
+  sm->each_node = NULL;
 
   return sm;
 }

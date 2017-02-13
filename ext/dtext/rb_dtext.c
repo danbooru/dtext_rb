@@ -7,6 +7,25 @@
 static VALUE mDTextRagel = Qnil;
 static VALUE mDTextRagelError = Qnil;
 
+static const char* each_node(const StateMachine* self, const size_t argc, const char* argv[]) {
+  VALUE result = Qnil;
+  VALUE block_args[argc];
+
+  for (size_t i = 0; i < argc; i++) {
+    block_args[i] = rb_enc_str_new_cstr(argv[i], rb_enc_find("utf-8"));
+  }
+
+  // XXX create an ensure block to do cleanup.
+  result = rb_yield_values2(argc, block_args);
+
+  if (NIL_P(result)) {
+    return NULL;
+  } else {
+    result = rb_String(result);
+    return rb_string_value_cstr(&result);
+  }
+}
+
 static VALUE parse(int argc, VALUE * argv, VALUE self) {
   VALUE input;
   VALUE input0;
@@ -56,6 +75,10 @@ static VALUE parse(int argc, VALUE * argv, VALUE self) {
   }
 
   sm = init_machine(RSTRING_PTR(input0), RSTRING_LEN(input0), f_strip, f_inline, f_mentions);
+  if (rb_block_given_p()) {
+    sm->each_node = each_node;
+  }
+
   if (!parse_helper(sm)) {
     GError* error = g_error_copy(sm->error);
     free_machine(sm);

@@ -41,6 +41,7 @@ typedef struct StateMachine {
   int d;
   int b;
   int quote;
+  const char* (*each_node)(const struct StateMachine* self, const size_t argc, const char* args[]);
 } StateMachine;
 
 StateMachine* init_machine(const char * src, size_t len, bool f_strip, bool f_inline, bool f_mentions);
