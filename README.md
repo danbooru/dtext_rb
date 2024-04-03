@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> DText was moved to the [Danbooru](https://github.com/danbooru/danbooru) repository in commit [d965f959b](https://github.com/danbooru/danbooru/commit/d965f959b49b15fe048a625d32b2db2807127286). See [lib/dtext_rb](https://github.com/danbooru/danbooru/tree/master/lib/dtext_rb#readme) in the Danbooru repo.
+
+---
+
 # DText
 
 A Ruby library for parsing [DText](https://danbooru.donmai.us/wiki_pages/help:dtext),
